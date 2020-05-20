@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
-
+import com.github.kittinunf.fuel.core.ResponseDeserializable
 
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.json.responseJson
 import com.github.kittinunf.result.Result
+import com.github.kittinunf.fuel.gson.responseObject
 
 class MainActivity : AppCompatActivity() {
     val EXTRA_MESSAGE: String = "com.example.emptyapp.MESSAGE"
@@ -25,10 +27,11 @@ class MainActivity : AppCompatActivity() {
         val editText: EditText = findViewById(R.id.editText) as EditText
         val message: String = editText.text.toString()
         val args: Array<String> = arrayOf("green", "red", "blue")
-        main(args)
+        val generateAddress : GenerateAddress? = main(args)
+        println("generateAddress:${generateAddress?.address}")
         //val result = getText("https://bsvnodeapi.herokuapp.com/generateaddress/test")
         //println(result)
-        intent.putExtra(EXTRA_MESSAGE, message)
+        intent.putExtra(EXTRA_MESSAGE, generateAddress?.address)
         startActivity(intent)
     }
 
@@ -48,26 +51,44 @@ class MainActivity : AppCompatActivity() {
 //        }
 //    }
 
-    fun main(args: Array<String>) {
-
+    //https://www.yuulinux.tokyo/15220/
+    data class GenerateAddress (
+        var address: String,
+        var privatekey_wif: String
+    )
+    
+    fun main(args: Array<String>) : GenerateAddress? {
+//        "https://www.yuulinux.tokyo/demo/bs-tender-server-mock/test.json".httpGet().responseObject<User> { req, res, result ->
+//            val(user,err) = result
+//            println("user:${user}")
+//        }
+        val generateAddress: GenerateAddress = GenerateAddress("", "")
         val httpAsync = "https://bsvnodeapi.herokuapp.com/generateaddress/test"
             .httpGet()
-            .responseString { request, response, result ->
+            .responseObject<GenerateAddress> { request, response, result ->
                 when (result) {
                     is Result.Failure -> {
-                        val ex = result.getException()
-                        println("failed request")
-                        println(ex)
+                        //val ex = result.getException()
+                        //println("failed request")
+                        //println(ex)
+                        //val(generateAddress,err) = result
                     }
                     is Result.Success -> {
-                        val data = result.get()
-                        println("success request")
-                        println(data)
+//                        val data = result.get()
+//                        val json = result.value.obj()
+//                        val results =json.get("results") as JSONArray
+//                        println("success request")
+//                        println(data)
+                        val(generateAddress,err) = result
+                        println("aaaagenerateaddress:${generateAddress}")
+                        generateAddress
                     }
                 }
             }
 
-        httpAsync.join()
+        //httpAsync.join()
+        println(generateAddress.address)
+        return null//httpAsync
     }
 
 //    fun main(args: Array<String>) {
