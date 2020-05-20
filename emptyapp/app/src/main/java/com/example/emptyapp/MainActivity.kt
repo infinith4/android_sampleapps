@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     fun main(args: Array<String>) {
 
-        val httpAsync = "https://httpbin.org/get"
+        val httpAsync = "https://bsvnodeapi.herokuapp.com/generateaddress/test"
             .httpGet()
             .responseString { request, response, result ->
                 when (result) {
@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     is Result.Success -> {
                         val data = result.get()
+                        println("success request")
                         println(data)
                     }
                 }
