@@ -1,2 +1,2 @@
-rootProject.name='Empty App'
+rootProject.name='DApp'
 include ':app'
